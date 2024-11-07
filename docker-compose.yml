@@ -1,0 +1,29 @@
+version: '2'
+services:
+  rails:
+    image: vfr-planner:master
+    ports:
+     - "3000:3000"
+     - "8080:8080"
+    environment:
+      FACEBOOK_APP_ID: $FACEBOOK_APP_ID
+      GOOGLE_APP_ID: $GOOGLE_APP_ID
+      GOOGLE_MAPS_KEY: $GOOGLE_MAPS_KEY
+      GOOGLE_ANALYTICS_KEY: $GOOGLE_ANALYTICS_KEY
+      OPENAIP_API_TOKEN: $OPENAIP_API_TOKEN
+      RAILS_ENV: production
+      SECRET_KEY_BASE: abbadead520752bfdc077e2ab57ec71a9ae02aea06a504960098407177031c842af2bf04ef94e259fc15ed341c9f4261bb8563bdfd00fb8c67823d826477fae3
+      RAILS_SERVE_STATIC_FILES: true
+    depends_on:
+     - mysql
+  mysql:
+    image: mysql/mysql-server:5.6
+    ports:
+     - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vfr
+      MYSQL_USER: vfr
+      MYSQL_PASSWORD: vfr
+    volumes:
+     - /var/lib/mysql
