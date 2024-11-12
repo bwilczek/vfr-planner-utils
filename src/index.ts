@@ -4,6 +4,7 @@ import axios from 'axios'
 import { readFileSync } from 'node:fs'
 import { Column, DataSource, Entity, PrimaryGeneratedColumn } from 'typeorm'
 import { Kind as NavPointKind, NavPoint } from "./entities/nav_point.js"
+import { buildAirportNavPointFromPayload, fetchAirports, fetchAirportsFromFile } from "./openaip/airport.js"
 
 // const rawHtml = (await axios.get("https://airspace.pansa.pl/aup/current")).data
 const rawHtml = readFileSync("tmp/aup_current.html").toString()
@@ -71,3 +72,15 @@ console.log(savedNavPoints[0]?.kind)
 console.log(NavPointKind.UNCONTROLLED)
 
 await dataSource.destroy()
+
+console.log("------------------------")
+
+// const airports = await fetchAirports()
+const airports = fetchAirportsFromFile("tmp/single_aerodrome.json")
+console.log(airports?.at(0))
+console.log(airports?.at(0)?.runways?.at(0)?.surface)
+console.log(airports?.at(0)?.runways?.at(0)?.dimension)
+
+const entity = buildAirportNavPointFromPayload(airports.at(0)!)
+console.log("------------------------")
+console.log(entity)

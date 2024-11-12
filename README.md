@@ -22,9 +22,11 @@ Pulling from openaip:
 ```
 curl -X GET -H "Content-Type: application/json" -H "x-openaip-api-key: $OPENAIP_API_TOKEN" 'https://api.core.openaip.net/api/airports?page=1&limit=1000&sortBy=name&sortDesc=true&country=PL&searchOptLwc=true'
 
-curl -X GET -H "Content-Type: application/json" -H "x-openaip-api-key: $OPENAIP_API_TOKEN" 'https://api.core.openaip.net/api/airports?page=1&limit=1&sortBy=name&sortDesc=true&country=PL&searchOptLwc=true&fields=name,icaoCode,elevation&search=EPWS'
+curl -X GET -H "Content-Type: application/json" -H "x-openaip-api-key: $OPENAIP_API_TOKEN" 'https://api.core.openaip.net/api/airports?page=1&limit=1&sortBy=name&sortDesc=true&country=PL&searchOptLwc=true&fields=name,icaoCode,elevation,type,geometry,elevation,magneticDeclination,frequencies,runways&search=EPWS'
 
 ```
+Airport data: https://www.openaip.net/data/airports/62614f5b4b027aab592aede3
+
 
 Run scripts with:
 ```
@@ -170,3 +172,6 @@ Running the PoC:
 npm install
 npx tsx src/index.ts
 ```
+
+JSON Schema to typescript interface:
+https://borischerny.com/json-schema-to-typescript-browser
