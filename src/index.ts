@@ -3,6 +3,7 @@ import { parse, HTMLElement } from 'node-html-parser'
 import axios from 'axios'
 import { readFileSync } from 'node:fs'
 import { Column, DataSource, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Kind as NavPointKind, NavPoint } from "./entities/nav_point.js"
 
 // const rawHtml = (await axios.get("https://airspace.pansa.pl/aup/current")).data
 const rawHtml = readFileSync("tmp/aup_current.html").toString()
@@ -49,15 +50,6 @@ console.log(rowToEntry(row))
 
 ///////////////
 
-@Entity("nav_points")
-class NavPoint {
-  @PrimaryGeneratedColumn()
-  id!: number
-
-  @Column("varchar")
-  name!: string
-}
-
 const dataSource = new DataSource({
   type: "mysql",
   host: "localhost",
@@ -73,6 +65,9 @@ const dataSource = new DataSource({
 await dataSource.initialize()
 const navPointRepository = dataSource.getRepository(NavPoint)
 const savedNavPoints = await navPointRepository.find()
-console.log("All NavPoints from the db: ", savedNavPoints)
+// console.log("All NavPoints from the db: ", savedNavPoints)
+console.log(savedNavPoints[0])
+console.log(savedNavPoints[0]?.kind)
+console.log(NavPointKind.UNCONTROLLED)
 
 await dataSource.destroy()
