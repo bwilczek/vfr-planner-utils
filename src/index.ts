@@ -20,6 +20,12 @@ switch(command) {
   case 'airports':
     await importAirports()
     break
+  case 'navaids':
+  case 'points':
+  case 'airspaces':
+  case 'aup':
+    console.log("To be implemented")
+    break
   default:
     printUsageAndExitWithError()
 }

@@ -175,3 +175,12 @@ npx tsx src/index.ts
 
 JSON Schema to typescript interface:
 https://borischerny.com/json-schema-to-typescript-browser
+
+
+# Dockerization
+
+```
+docker build -t vfr-planner-utils:main .
+
+docker run --rm -e MYSQL_HOST=172.17.0.1 -e OPENAIP_API_TOKEN=$OPENAIP_API_TOKEN vfr-planner-utils:main airports
+```
