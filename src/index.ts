@@ -1,86 +1,25 @@
 import "reflect-metadata"
-import { parse, HTMLElement } from 'node-html-parser'
-import axios from 'axios'
-import { readFileSync } from 'node:fs'
-import { Column, DataSource, Entity, PrimaryGeneratedColumn } from 'typeorm'
-import { Kind as NavPointKind, NavPoint } from "./entities/nav_point.js"
-import { buildAirportNavPointFromPayload, fetchAirports, fetchAirportsFromFile } from "./openaip/airport.js"
+import { importAirports } from "./openaip/airport.js"
 
-// const rawHtml = (await axios.get("https://airspace.pansa.pl/aup/current")).data
-const rawHtml = readFileSync("tmp/aup_current.html").toString()
+const command = process.argv[2]
 
-const root = parse(rawHtml)
-
-type RawAupEntry = {
-  combinedDesignator: string,
-  levelFrom: string,
-  levelTo: string,
-  timeFrom: string,
-  timeTo: string,
-  responsibleUnit: string,
-  fuaEuRestrictions: string,
-  remarks: string
+const printUsageAndExitWithError = () => {
+  const usage = `
+    Supported commands:
+      airports  - Import airpors from openaip
+      navaids   - Import nav aids from openaip
+      points    - Import reporting points from openaip
+      airspaces - Import airspaces from openaip
+      aup       - Import AUP data from pansa
+  `
+  console.log(usage)
+  process.exit(1)
 }
 
-const rowToEntry = (row: HTMLElement | undefined): RawAupEntry | null => {
-  if(!row) {
-    return null
-  }
-
-  const cellText: Array<string> = row.querySelectorAll('td').map(td => td.textContent)
-  return {
-    combinedDesignator: cellText[1]!,
-    levelFrom: cellText[2]!,
-    levelTo: cellText[3]!,
-    timeFrom: cellText[4]!,
-    timeTo: cellText[5]!,
-    responsibleUnit: cellText[6]!,
-    fuaEuRestrictions: cellText[7]!,
-    remarks: cellText[8]!
-  }
+switch(command) {
+  case 'airports':
+    await importAirports()
+    break
+  default:
+    printUsageAndExitWithError()
 }
-
-const rows = root.querySelectorAll('table[data-table="charlie"] tbody tr')
-const row: HTMLElement = rows.at(0)!
-
-// const cellText: Array<string> = row.querySelectorAll('td').map(td => td.textContent)
-// console.log(cellText)
-// console.log(cellText[0])
-
-console.log(rowToEntry(row))
-
-///////////////
-
-const dataSource = new DataSource({
-  type: "mysql",
-  host: "localhost",
-  port: 3306,
-  username: "vfr",
-  password: "vfr",
-  database: "vfr",
-  synchronize: false,
-  logging: true,
-  entities: [NavPoint]
-})
-
-await dataSource.initialize()
-const navPointRepository = dataSource.getRepository(NavPoint)
-const savedNavPoints = await navPointRepository.find()
-// console.log("All NavPoints from the db: ", savedNavPoints)
-console.log(savedNavPoints[0])
-console.log(savedNavPoints[0]?.kind)
-console.log(NavPointKind.UNCONTROLLED)
-
-await dataSource.destroy()
-
-console.log("------------------------")
-
-// const airports = await fetchAirports()
-const airports = fetchAirportsFromFile("tmp/single_aerodrome.json")
-console.log(airports?.at(0))
-console.log(airports?.at(0)?.runways?.at(0)?.surface)
-console.log(airports?.at(0)?.runways?.at(0)?.dimension)
-
-const entity = buildAirportNavPointFromPayload(airports.at(0)!)
-console.log("------------------------")
-console.log(entity)

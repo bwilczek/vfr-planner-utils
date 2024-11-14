@@ -45,24 +45,45 @@ enum status: [:active, :inactive]
 */
 
 export enum Status {
-  ACTIVE = 0,
-  INACTIVE = 1
+  ACTIVE,
+  INACTIVE
 }
 
 export enum Kind {
-  CONTROLLED = 0,
-  UNCONTROLLED = 1,
-  MILITARY = 2,
-  AIRSTRIP = 3,
-  HELIPAD = 4,
-  VFR_POINT = 5,
-  IFR_POINT = 6,
-  VOR = 7,
-  NDB = 8,
-  VOR_DME = 9,
-  DME = 10,
-  OTHER_AIRSTRIP = 11
+  CONTROLLED,
+  UNCONTROLLED,
+  MILITARY,
+  AIRSTRIP,
+  HELIPAD,
+  VFR_POINT,
+  IFR_POINT,
+  VOR,
+  NDB,
+  VOR_DME,
+  DME,
+  OTHER_AIRSTRIP
 }
+
+export const AerodromeKinds = [
+  Kind.CONTROLLED,
+  Kind.UNCONTROLLED,
+  Kind.MILITARY,
+  Kind.AIRSTRIP,
+  Kind.HELIPAD,
+  Kind.OTHER_AIRSTRIP
+]
+
+export const NavAidKinds = [
+  Kind.VOR,
+  Kind.NDB,
+  Kind.VOR_DME,
+  Kind.DME
+]
+
+export const ReportingPointKinds = [
+  Kind.VFR_POINT,
+  Kind.IFR_POINT
+]
 
 @Entity("nav_points")
 export class NavPoint {
