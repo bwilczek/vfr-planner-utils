@@ -1,5 +1,6 @@
 import "reflect-metadata"
 import { importAirports } from "./openaip/airport.js"
+import { importReportingPoints } from "./openaip/reporting_point.js"
 
 const command = process.argv[2]
 
@@ -22,6 +23,8 @@ switch(command) {
     break
   case 'navaids':
   case 'points':
+    await importReportingPoints()
+    break
   case 'airspaces':
   case 'aup':
     console.log("To be implemented")

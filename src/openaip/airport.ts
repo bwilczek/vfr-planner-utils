@@ -4,6 +4,7 @@ import { AirportPayload, Type } from "./types/airport.js"
 import { readFileSync } from "node:fs"
 import { dataSource } from "../data_source.js"
 import { In } from "typeorm"
+import { fetchFromOpenAip } from "../openaip_fetch.js"
 
 type AirportsPayload = {
   limit: string,
@@ -13,37 +14,20 @@ type AirportsPayload = {
   items: Array<AirportPayload>
 }
 
-const fetchAirports = async (): Promise<Array<AirportPayload>> => {
-  // curl -X GET -H "Content-Type: application/json" -H "x-openaip-api-key: $OPENAIP_API_TOKEN" 'https://api.core.openaip.net/api/airports?page=1&limit=1&sortBy=name&sortDesc=true&country=PL&searchOptLwc=true&fields=name,icaoCode,elevation,type,geometry,elevation,magneticDeclination,frequencies,runways&search=EPWS' 
-  // Content-Type: application/json"
-  // "x-openaip-api-key: $OPENAIP_API_TOKEN" 
-  // 'https://api.core.openaip.net/api/airports
-  // page=1
-  // limit=1000
-  // sortBy=name
-  // sortDesc=true
-  // country=PL
-  // searchOptLwc=true
-  // fields=name,icaoCode,elevation,type,geometry,elevation,magneticDeclination,frequencies,runways
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      "x-openaip-api-key": process.env.OPENAIP_API_TOKEN
-    },
-    params: {
-      "page": 1,
-      "limit": 1000,
-      "sortBy": "name",
-      "sortDesc": true,
-      "country": "PL",
-      "searchOptLwc": true,
-      // "search": "EPWS",
-      "fields": "name,icaoCode,elevation,type,geometry,elevation,magneticDeclination,frequencies,runways"
-    }
-  }
+export const fetchSimplifiedAirportsDictionary = async (): Promise<Record<string, string>> => {
+  const fields = "name"
+  const fullData = await fetchFromOpenAip<AirportsPayload, AirportPayload>("airports", {fields})
 
-  const data: AirportsPayload = await (await axios.get("https://api.core.openaip.net/api/airports", config)).data
-  return data.items as Array<AirportPayload>
+  const ret: Record<string, string> = {}
+  for(const airport of fullData) {
+    if(airport._id && airport.name) ret[airport._id] = airport.name
+  }
+  return ret
+}
+
+const fetchAirports = async (): Promise<Array<AirportPayload>> => {
+  const fields = "name,icaoCode,elevation,type,geometry,elevation,magneticDeclination,frequencies,runways"
+  return await fetchFromOpenAip<AirportsPayload, AirportPayload>("airports", {fields})
 }
 
 const fetchAirportsFromFile = (path: string): Array<AirportPayload> => {
@@ -92,7 +76,7 @@ const mapOpenAipTypeToNavPointKind = (openAipType: Type | undefined): Kind => {
 
 const buildDescription = (payload: AirportPayload): string => {
   let ret = ""
-  ret += `Żródło danych: <a href="https&colon;//www.openaip.net/data/airports/${payload._id}">OpenAIP</a><br /><br />`
+  ret += `Żródło danych: <a href="https&colon;//www.openaip.net/data/airports/${payload._id}" target="_blank">OpenAIP</a><br /><br />`
   if(payload.icaoCode) {
     ret += `Kod ICAO: ${payload.icaoCode}<br /><br />`
   }
