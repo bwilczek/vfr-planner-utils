@@ -1,14 +1,6 @@
 import axios from "axios"
 
-export interface IOpenAipItem {
-  name?: string | undefined
-}
-
-export interface IOpenAipCollection {
-  items: Array<IOpenAipItem>
-}
-
-export const fetchFromOpenAip = async <C extends IOpenAipCollection, I extends IOpenAipItem>(resource: string, extraParams: object = {}): Promise<Array<I>> => {
+export const fetchFromOpenAip = async <TItem>(resource: string, extraParams: object = {}): Promise<Array<TItem>> => {
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -26,6 +18,6 @@ export const fetchFromOpenAip = async <C extends IOpenAipCollection, I extends I
 
   config.params = {...config.params, ...extraParams}
 
-  const data: C = await (await axios.get(`https://api.core.openaip.net/api/${resource}`, config)).data
-  return data.items as Array<I>
+  const data = await (await axios.get(`https://api.core.openaip.net/api/${resource}`, config)).data
+  return data.items as Array<TItem>
 }

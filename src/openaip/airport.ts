@@ -6,17 +6,9 @@ import { dataSource } from "../data_source.js"
 import { In } from "typeorm"
 import { fetchFromOpenAip } from "../openaip_fetch.js"
 
-type AirportsPayload = {
-  limit: string,
-  totalCount: number,
-  totalPages: number,
-  page: number,
-  items: Array<AirportPayload>
-}
-
 export const fetchSimplifiedAirportsDictionary = async (): Promise<Record<string, string>> => {
   const fields = "name"
-  const fullData = await fetchFromOpenAip<AirportsPayload, AirportPayload>("airports", {fields})
+  const fullData = await fetchFromOpenAip<AirportPayload>("airports", {fields})
 
   const ret: Record<string, string> = {}
   for(const airport of fullData) {
@@ -27,7 +19,7 @@ export const fetchSimplifiedAirportsDictionary = async (): Promise<Record<string
 
 const fetchAirports = async (): Promise<Array<AirportPayload>> => {
   const fields = "name,icaoCode,elevation,type,geometry,elevation,magneticDeclination,frequencies,runways"
-  return await fetchFromOpenAip<AirportsPayload, AirportPayload>("airports", {fields})
+  return await fetchFromOpenAip<AirportPayload>("airports", {fields})
 }
 
 const fetchAirportsFromFile = (path: string): Array<AirportPayload> => {
@@ -35,7 +27,7 @@ const fetchAirportsFromFile = (path: string): Array<AirportPayload> => {
   return JSON.parse(rawJson).items as Array<AirportPayload>
 }
 
-const buildElevationString = (elevationInMeters: number | undefined): string | null => {
+export const buildElevationString = (elevationInMeters: number | undefined): string | null => {
   if(!elevationInMeters) return null
 
   const elevationInFeet = Math.round(elevationInMeters * 3.28084)

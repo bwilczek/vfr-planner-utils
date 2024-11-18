@@ -6,17 +6,9 @@ import { fetchFromOpenAip } from "../openaip_fetch.js"
 import { fetchSimplifiedAirportsDictionary } from "./airport.js"
 import { ReportingPointPayload } from "./types/reporting_point.js"
 
-type ReportingPointsPayload = {
-  limit: string,
-  totalCount: number,
-  totalPages: number,
-  page: number,
-  items: Array<ReportingPointPayload>
-}
-
 const fetchReportingPoints = async ():Promise<Array<ReportingPointPayload>> => {
   const fields = "name,geometry,airports"
-  return await fetchFromOpenAip<ReportingPointsPayload, ReportingPointPayload>("reporting-points", {fields})
+  return await fetchFromOpenAip<ReportingPointPayload>("reporting-points", {fields})
 }
 
 const getMagneticDeclinationForLatLng = async (lat: number | null, lng: number | null): Promise<number | null> => {
@@ -36,24 +28,24 @@ const buildDescription = (simplifiedAirports: Record<string, string>, airports: 
 }
 
 const buildReportingPointNavPointFromPayload = async (payload: ReportingPointPayload, simplifiedAirports: Record<string, string>): Promise<NavPoint> => {
-  const airport = new NavPoint()
+  const point = new NavPoint()
   const lat = payload.geometry?.coordinates[1] || null
   const lng = payload.geometry?.coordinates[0] || null
-  airport.name = payload.name || null
-  airport.lat = lat
-  airport.lng = lng
-  airport.kind = Kind.VFR_POINT
-  airport.status = Status.ACTIVE
-  airport.height = null
-  airport.elevation = null
-  airport.icaoCode = null
-  airport.description = payload._id ? buildDescription(simplifiedAirports, payload.airports || []) : ""
-  airport.radio = null
-  airport.country = 'pl'
-  airport.declination = await getMagneticDeclinationForLatLng(lat, lng)
-  airport.createdAt = new Date()
-  airport.updatedAt = new Date()
-  return airport
+  point.name = payload.name || null
+  point.lat = lat
+  point.lng = lng
+  point.kind = Kind.VFR_POINT
+  point.status = Status.ACTIVE
+  point.height = null
+  point.elevation = null
+  point.icaoCode = null
+  point.description = payload._id ? buildDescription(simplifiedAirports, payload.airports || []) : ""
+  point.radio = null
+  point.country = 'pl'
+  point.declination = await getMagneticDeclinationForLatLng(lat, lng)
+  point.createdAt = new Date()
+  point.updatedAt = new Date()
+  return point
 }
 
 export const importReportingPoints = async () => {
