@@ -15,7 +15,7 @@ const fetchNavAids = async ():Promise<Array<NavAidPaylod>> => {
 //   MHz
 // }
 
-const mapOpenAipTypeToNavPointKind = (openAipType: Type | undefined): Kind => {
+const mapOpenAipTypeToNavPointKind = (openAipType: NavAidType | undefined): Kind => {
   if(openAipType === undefined) return Kind.VOR
 
   switch(openAipType) {
@@ -51,7 +51,7 @@ const buildDescription = (payload: NavAidPaylod): string | null => {
   return ret
 }
 
-const buildNavAidNavPointFromPayload = (payload) => {
+const buildNavAidNavPointFromPayload = (payload: NavAidPaylod) => {
   const navpoint = new NavPoint()
   navpoint.name = `${payload.identifier} (${payload.name})` || null
   navpoint.lat = payload.geometry?.coordinates[1] || null
@@ -60,7 +60,7 @@ const buildNavAidNavPointFromPayload = (payload) => {
   navpoint.status = Status.ACTIVE
   navpoint.height = null
   navpoint.elevation = buildElevationString(payload.elevation?.value)
-  navpoint.icaoCode = payload.icaoCode || null
+  navpoint.icaoCode = null
   navpoint.description = buildDescription(payload)
   navpoint.radio = buildRadioString(payload.frequency)
   navpoint.country = 'pl'
