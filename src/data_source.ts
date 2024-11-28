@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm"
 import { NavPoint } from "./entities/nav_point.js"
 import { Airspace } from "./entities/airspace.js"
+import { ActiveAirspace } from "./entities/active_airspace.js"
 
 export const dataSource = new DataSource({
   type: "mysql",
@@ -11,5 +12,5 @@ export const dataSource = new DataSource({
   database: process.env.MYSQL_DATABASE ?? "vfr",
   synchronize: false,
   logging: process.env.MYSQL_LOGGING ? true : false,
-  entities: [NavPoint, Airspace]
+  entities: [NavPoint, Airspace, ActiveAirspace]
 })
