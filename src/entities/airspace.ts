@@ -43,6 +43,17 @@ export enum Status {
   KEY `index_airspaces_on_country` (`country`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 |
 
+Airspace.create(
+  name: 'ATZ EPWS',
+  kind: :atz,
+  country: 'pl',
+  points: '16.8355555555556,51.2944444444444,0 16.8280555555556,51.3122222222222,0 17.0661111111111,51.3219444444444,0 17.1933333333333,51.1963888888889,0 16.8355555555556,51.2944444444444,0',
+  description: 'Strefa ruchu nadlotniskowego lotniska Wrocław-Szymanów',
+  level_min: 0,
+  level_max: 2100,
+  permanent: false
+)
+
 create_table "airspaces", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
   t.string   "name"
   t.integer  "kind"
