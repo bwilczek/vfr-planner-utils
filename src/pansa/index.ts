@@ -2,13 +2,13 @@ import { parse, HTMLElement } from 'node-html-parser'
 import axios from 'axios'
 import { readFileSync } from 'node:fs'
 
-// const rawHtml = (await axios.get("https://airspace.pansa.pl/aup/current")).data
-const rawHtml = readFileSync("tmp/aup_current.html").toString()
+const rawHtml = (await axios.get("https://airspace.pansa.pl/aup/current")).data
+// const rawHtml = readFileSync("tmp/aup_current.html").toString()
 
 const root = parse(rawHtml)
 
 type RawAupEntry = {
-  combinedDesignator: string,
+  designator: string,
   levelFrom: string,
   levelTo: string,
   timeFrom: string,
@@ -25,7 +25,7 @@ const rowToEntry = (row: HTMLElement | undefined): RawAupEntry | null => {
 
   const cellText: Array<string> = row.querySelectorAll('td').map(td => td.textContent)
   return {
-    combinedDesignator: cellText[1]!,
+    designator: cellText[1]!,
     levelFrom: cellText[2]!,
     levelTo: cellText[3]!,
     timeFrom: cellText[4]!,
@@ -36,11 +36,13 @@ const rowToEntry = (row: HTMLElement | undefined): RawAupEntry | null => {
   }
 }
 
-const rows = root.querySelectorAll('table[data-table="charlie"] tbody tr')
-const row: HTMLElement = rows.at(0)!
+const rows = root.querySelectorAll('table[data-table="bravo"] tbody tr')
+
+for(const row of rows) {
+  // const row: HTMLElement = rows.at(0)!
+  console.log(rowToEntry(row))
+}
 
 // const cellText: Array<string> = row.querySelectorAll('td').map(td => td.textContent)
 // console.log(cellText)
 // console.log(cellText[0])
-
-console.log(rowToEntry(row))
