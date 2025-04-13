@@ -1,9 +1,7 @@
 
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
-import { Kind } from "./nav_point.js"
-import { ActiveAirspace } from "./active_airspace.js"
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 
-export enum Status {
+export enum Kind {
   FIS,
   ATZ,
   CTR,
