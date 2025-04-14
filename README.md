@@ -184,3 +184,16 @@ docker build -t vfr-planner-utils:main .
 
 docker run --rm -e MYSQL_HOST=172.17.0.1 -e OPENAIP_API_TOKEN=$OPENAIP_API_TOKEN vfr-planner-utils:main airports
 ```
+
+
+# Slack Notification
+
+```
+curl -X POST -H 'Content-type: application/json' --data '{"text":"$MESSAGE"}' $SLACK_NOTIFICATIONS_URL
+```
+
+# Import Magnetic Declination
+
+```
+mysql -h 127.0.0.1 vfr -P 3306 -u vfr --password=vfr < tmp/mag_declinations_dump.sql
+```

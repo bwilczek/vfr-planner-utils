@@ -3,6 +3,7 @@ import { importAirports } from "./openaip/airport.js"
 import { importReportingPoints } from "./openaip/reporting_point.js"
 import { importNavAids } from "./openaip/navaid.js"
 import { importAirspaces } from "./openaip/airspace.js"
+import { importAup } from "./pansa/aup.js"
 
 const command = process.argv[2]
 
@@ -33,7 +34,7 @@ switch(command) {
     await importAirspaces()
     break
   case 'aup':
-    console.log("To be implemented")
+    await importAup()
     break
   default:
     printUsageAndExitWithError()
