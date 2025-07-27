@@ -19,19 +19,36 @@ const getMagneticDeclinationForLatLng = async (lat: number | null, lng: number |
   return parseFloat(JSON.parse(JSON.stringify(result))[0]['declination'])
 }
 
-const buildDescription = (simplifiedAirports: Record<string, string>, airports: Array<string>): string => {
+const buildDescription = (simplifiedAirports: Record<string, {name: string, icaoCode: string | undefined }>, airports: Array<string>): string => {
   let ret = ""
   for(const airportId of airports) {
-    ret += `${simplifiedAirports[airportId]} <br />`
+    ret += `${simplifiedAirports[airportId]?.name} <br />`
   }
   return ret
 }
 
-const buildReportingPointNavPointFromPayload = async (payload: ReportingPointPayload, simplifiedAirports: Record<string, string>): Promise<NavPoint> => {
+const buildName = (simplifiedAirports: Record<string, {name: string, icaoCode: string | undefined }>, payload: ReportingPointPayload): string => {
+  const airports = payload.airports || []
+  let ret = payload.name || "?"
+  let icaoCodes: Array<string> = []
+  let icaoCode: string | undefined;
+  for(const airportId of airports) {
+    icaoCode = simplifiedAirports[airportId]?.icaoCode
+    if(icaoCode) {
+      icaoCodes.push(icaoCode)
+    }
+  }
+  if(icaoCodes.length > 0) {
+    ret += ` (${icaoCodes.join(", ")})`
+  }
+  return ret
+}
+
+const buildReportingPointNavPointFromPayload = async (payload: ReportingPointPayload, simplifiedAirports: Record<string, {name: string, icaoCode: string | undefined }>): Promise<NavPoint> => {
   const point = new NavPoint()
   const lat = payload.geometry?.coordinates[1] || null
   const lng = payload.geometry?.coordinates[0] || null
-  point.name = payload.name || null
+  point.name = payload._id ? buildName(simplifiedAirports, payload) : (payload.name || null)
   point.lat = lat
   point.lng = lng
   point.kind = Kind.VFR_POINT

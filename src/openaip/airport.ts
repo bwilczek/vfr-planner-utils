@@ -6,13 +6,13 @@ import { dataSource } from "../data_source.js"
 import { In } from "typeorm"
 import { fetchFromOpenAip } from "../openaip_fetch.js"
 
-export const fetchSimplifiedAirportsDictionary = async (): Promise<Record<string, string>> => {
-  const fields = "name"
+export const fetchSimplifiedAirportsDictionary = async (): Promise<Record<string, {name: string, icaoCode: string | undefined }>> => {
+  const fields = "name,icaoCode"
   const fullData = await fetchFromOpenAip<AirportPayload>("airports", {fields})
 
-  const ret: Record<string, string> = {}
+  const ret: Record<string, {name: string, icaoCode: string | undefined }> = {}
   for(const airport of fullData) {
-    if(airport._id && airport.name) ret[airport._id] = airport.name
+    if(airport._id && airport.name) ret[airport._id] = {name: airport.name, icaoCode: airport.icaoCode }
   }
   return ret
 }
